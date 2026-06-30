@@ -36,7 +36,7 @@
             padding: 30px;
             display: flex;
             justify-content: space-between;
-            align-items: center; /* Vertikale Zentrierung für Logo und Menü */
+            align-items: center; /* Zentriert Logo und Dropdown horizontal */
             z-index: 1000;
             pointer-events: none;
         }
@@ -49,7 +49,7 @@
         }
 
         .site-logo {
-            height: 55px;
+            height: 55px; /* Optimale Höhe für das blaue Logo */
             width: auto;
             object-fit: contain;
         }
@@ -133,92 +133,10 @@
             max-width: 650px;
         }
 
-        /* --- POP-UPS --- */
+        /* --- POP-UPS (MODALS) --- */
         .modal {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.9);
-            background: #ffffff;
-            border: 3px solid #000000;
-            padding: 40px;
-            max-width: 500px;
-            width: 90%;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        .modal.active {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-            pointer-events: auto;
-        }
-
-        .modal h3 {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .close-btn {
-            background: #000000;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.8);
-            z-index: 1999;
-            display: none;
-        }
-        .overlay.active {
-            display: block;
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="logo-wrapper" onclick="navigateTo('')">
-            <img src="Logo.png" alt="alle für alle Logo" class="site-logo">
-        </div>
-        <div class="nav-dropdown">
-            <select id="menu-select" onchange="navigateTo(this.value)">
-                <option value="">Raum (Startseite)</option>
-                <option value="ueber-uns">Über das Projekt</option>
-                <option value="formate">Formate</option>
-                <option value="manifest">Manifest</option>
-                <option value="kontakt">Kontakt</option>
-            </select>
-        </div>
-    </header>
-
-    <div class="page" id="page-home">
-        <div id="canvas-container"></div>
-    </div>
-
-    <div class="page" id="page-ueber-uns">
-        <div class="content-container">
-            <h2>Über das Projekt</h2>
-            <p>Demokratie ist keine Selbstverständlichkeit. Sie ist ein lebendiger Organismus, der von Beteiligung, Reibung und Bewegung lebt. „alle für alle“ macht diese Dynamik sicht- und erlebbar.</p>
-            <p>Hier entsteht ein digitaler und analoger Raum für Kommunikation, der gesellschaftliche Strukturen hinterfragt und neue Wege der Partizipation erprobt.</p>
-        </div>
-    </div>
-
-    <div class="page" id="page-formate">
-        <div class="content-container">
-            <h2>Formate</h2>
-            <p>Unsere Bewegung findet in unterschiedlichen Kanälen statt. Wir verbinden digitale Interaktion mit realen Interventionen im urbanen Raum.</p>
-            <p
+            background:
