@@ -27,7 +27,7 @@
             height: 100vh;
         }
 
-        /* --- NAVIGATION & HEADER --- */
+        /* --- NAVIGATION & HEADER (Perfekt auf einer Höhe) --- */
         header {
             position: fixed;
             top: 0;
@@ -36,7 +36,7 @@
             padding: 30px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: center; /* Vertikale Zentrierung für Logo und Menü */
             z-index: 1000;
             pointer-events: none;
         }
@@ -49,13 +49,15 @@
         }
 
         .site-logo {
-            height: 60px; /* Perfekte Höhe für dein quadratisches Logo */
+            height: 55px;
             width: auto;
             object-fit: contain;
         }
 
         .nav-dropdown {
             pointer-events: auto;
+            display: flex;
+            align-items: center;
         }
 
         select {
@@ -90,7 +92,6 @@
             padding: 140px 30px 60px 30px;
         }
 
-        /* Der 3D-Raum (Startseite) ist standardmäßig aktiv */
         #page-home {
             opacity: 1;
             pointer-events: auto;
@@ -132,7 +133,7 @@
             max-width: 650px;
         }
 
-        /* --- POP-UPS (RAYCASTER MODALS) --- */
+        /* --- POP-UPS --- */
         .modal {
             position: fixed;
             top: 50%;
@@ -220,182 +221,4 @@
         <div class="content-container">
             <h2>Formate</h2>
             <p>Unsere Bewegung findet in unterschiedlichen Kanälen statt. Wir verbinden digitale Interaktion mit realen Interventionen im urbanen Raum.</p>
-            <p>Von Plakatkampagnen und interaktiven One-Pagern bis hin zu moderierten Workshops und Diskurs-Formaten — wir schaffen Plattformen, die Menschen zusammenbringen.</p>
-        </div>
-    </div>
-
-    <div class="page" id="page-manifest">
-        <div class="content-container">
-            <h2>Manifest</h2>
-            <p>1. Bewegung ist Pflicht. Stillstand bedeutet Rückschritt im demokratischen Gefüge.</p>
-            <p>2. Transparenz schafft Vertrauen. Räume müssen geöffnet, Barrieren abgebaut werden.</p>
-            <p>3. Jede Stimme formt den Raum. Demokratie ist kein Zuschauersport, sondern ein kollektiver Prozess.</p>
-        </div>
-    </div>
-
-    <div class="page" id="page-kontakt">
-        <div class="content-container">
-            <h2>Kontakt</h2>
-            <p>Du möchtest dich einbringen, ein Format unterstützen oder hast Fragen zum Projekt?</p>
-            <p>Schreib uns eine E-Mail oder vernetze dich mit unserer Redaktion. Gemeinsam setzen wir Ideen in Bewegung.</p>
-        </div>
-    </div>
-
-    <div class="overlay" id="overlay" onclick="closeModal()"></div>
-    <div class="modal" id="modal">
-        <h3 id="modal-title">Element</h3>
-        <p id="modal-text">Inhalt wird geladen...</p>
-        <button class="close-btn" onclick="closeModal()">Schließen</button>
-    </div>
-
-    <script>
-        // --- SEITEN-STEUERUNG (NAVIGATION) ---
-        function navigateTo(pageId) {
-            // Alle Unterseiten ausblenden
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(page => page.classList.remove('active'));
-            
-            // Dropdown synchronisieren
-            document.getElementById('menu-select').value = pageId;
-
-            // Gewünschte Seite aktivieren
-            if(pageId === '') {
-                // Zurück zum 3D-Raum
-                document.getElementById('page-home').style.opacity = "1";
-                document.getElementById('page-home').style.pointerEvents = "auto";
-            } else {
-                // Unterseite einblenden
-                const targetPage = document.getElementById('page-' + pageId);
-                if(targetPage) {
-                    targetPage.classList.add('active');
-                }
-            }
-        }
-
-        // --- THREE.JS: 3D-RAUM MIT WÄNDEN UND FENSTER ---
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff); 
-
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(4, 3, 7);
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        container.appendChild(renderer.domElement);
-
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.minDistance = 3;
-        controls.maxDistance = 12;
-
-        // Beleuchtung
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-        scene.add(ambientLight);
-        const light1 = new THREE.DirectionalLight(0xffffff, 0.5);
-        light1.position.set(5, 8, 5);
-        scene.add(light1);
-
-        // Raum-Konstruktion
-        const roomGroup = new THREE.Group();
-        const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, side: THREE.DoubleSide });
-        const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xe5e5e5, side: THREE.DoubleSide });
-        const ceilingMaterial = new THREE.MeshStandardMaterial({ color: 0xf9f9f9, side: THREE.DoubleSide });
-        const frameMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
-
-        const size = 6;
-
-        // Boden & Decke
-        const floorGeo = new THREE.PlaneGeometry(size, size);
-        const floor = new THREE.Mesh(floorGeo, floorMaterial);
-        floor.rotation.x = Math.PI / 2;
-        floor.position.y = -size / 2;
-        roomGroup.add(floor);
-
-        const ceilingGeo = new THREE.PlaneGeometry(size, size);
-        const ceiling = new THREE.Mesh(ceilingGeo, ceilingMaterial);
-        ceiling.rotation.x = -Math.PI / 2;
-        ceiling.position.y = size / 2;
-        roomGroup.add(ceiling);
-
-        // Wände (Rückseite, Links, Rechts)
-        const backWall = new THREE.Mesh(new THREE.PlaneGeometry(size, size), wallMaterial);
-        backWall.position.z = -size / 2;
-        roomGroup.add(backWall);
-
-        const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(size, size), wallMaterial);
-        leftWall.rotation.y = Math.PI / 2;
-        leftWall.position.x = -size / 2;
-        roomGroup.add(leftWall);
-
-        const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(size, size), wallMaterial);
-        rightWall.rotation.y = -Math.PI / 2;
-        rightWall.position.x = size / 2;
-        roomGroup.add(rightWall);
-
-        // Vorderwand mit Fensterausschnitt
-        const windowSize = 2.5;
-        const wallPieceSize = (size - windowSize) / 2;
-
-        const wallBottom = new THREE.Mesh(new THREE.PlaneGeometry(size, wallPieceSize), wallMaterial);
-        wallBottom.position.set(0, -size/2 + wallPieceSize/2, size/2);
-        const wallTop = new THREE.Mesh(new THREE.PlaneGeometry(size, wallPieceSize), wallMaterial);
-        wallTop.position.set(0, size/2 - wallPieceSize/2, size/2);
-        const wallLeft = new THREE.Mesh(new THREE.PlaneGeometry(wallPieceSize, windowSize), wallMaterial);
-        wallLeft.position.set(-size/2 + wallPieceSize/2, 0, size/2);
-        const wallRight = new THREE.Mesh(new THREE.PlaneGeometry(wallPieceSize, windowSize), wallMaterial);
-        wallRight.position.set(size/2 - wallPieceSize/2, 0, size/2);
-        roomGroup.add(wallBottom, wallTop, wallLeft, wallRight);
-
-        // Fensterrahmen
-        const frameTop = new THREE.Mesh(new THREE.BoxGeometry(windowSize, 0.05, 0.05), frameMaterial);
-        frameTop.position.set(0, windowSize/2, size/2);
-        const frameBottom = frameTop.clone(); frameBottom.position.y = -windowSize/2;
-        const frameLeft = new THREE.Mesh(new THREE.BoxGeometry(0.05, windowSize, 0.05), frameMaterial);
-        frameLeft.position.set(-windowSize/2, 0, size/2);
-        const frameRight = frameLeft.clone(); frameRight.position.x = windowSize/2;
-        roomGroup.add(frameTop, frameBottom, frameLeft, frameRight);
-
-        // Konturlinien
-        const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(size, size, size));
-        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
-        roomGroup.add(line);
-
-        scene.add(roomGroup);
-
-        // --- INTERAKTIVE CUBES IN DER MITTE ---
-        const interactiveObjects = [];
-        const elementData = [
-            { name: "MEINUNGSFREIHEIT", color: 0x000000, pos: [-1, -1, 0], info: "Die Basis jeder demokratischen Debatte." },
-            { name: "PARTIZIPATION", color: 0x222222, pos: [1.2, 0.5, -1], info: "Demokratie lebt vom unermüdlichen Mitmachen." },
-            { name: "GLEICHHEIT", color: 0x444444, pos: [0, -1.8, 1.5], info: "Das stabile Fundament unserer Gesellschaft." }
-        ];
-
-        elementData.forEach((data) => {
-            const cube = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), new THREE.MeshStandardMaterial({ color: data.color }));
-            cube.position.set(data.pos[0], data.pos[1], data.pos[2]);
-            cube.userData = { title: data.name, text: data.info };
-            scene.add(cube);
-            interactiveObjects.push(cube);
-        });
-
-        // --- RAYCASTER KLICK-LOGIK ---
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-
-        window.addEventListener('click', (event) => {
-            // Verhindert Klicks, wenn ein Pop-up oder eine Unterseite offen ist
-            if (document.getElementById('modal').classList.contains('active')) return;
-            if (document.getElementById('menu-select').value !== '') return;
-
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(interactiveObjects);
-
-            if (intersects.length > 0) {
-                const obj = intersects[0].object;
-                document.getElementById('modal-title').innerText = obj.userData.title;
-                document.getElementById('modal-text
+            <p
