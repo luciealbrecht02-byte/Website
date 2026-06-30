@@ -33,12 +33,14 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 30px;
+            padding: 20px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
             pointer-events: none;
+            background-color: #f08b88; /* Deine Element-Farbe */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .logo-wrapper {
@@ -49,9 +51,11 @@
         }
 
         .site-logo {
-            height: 55px;
+            height: 50px;
             width: auto;
             object-fit: contain;
+            /* Dieser CSS-Filter färbt ein schwarzes Logo exakt in #204f9e um */
+            filter: invert(24%) sepia(85%) saturate(1633%) hue-rotate(205deg) brightness(91%) contrast(93%);
         }
 
         .nav-dropdown {
@@ -61,8 +65,9 @@
         }
 
         select {
-            background: #ffffff;
-            border: 2px solid #000000;
+            background: transparent;
+            border: none;
+            color: #204f9e; /* Deine neue blaue Schriftfarbe */
             padding: 10px 20px;
             font-size: 0.9rem;
             font-weight: 700;
@@ -70,10 +75,16 @@
             outline: none;
             text-transform: uppercase;
             appearance: none;
-            padding-right: 40px;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M0 3l5 5 5-5z'/></svg>");
+            padding-right: 35px;
+            /* Blauer Pfeil passend zur Schriftfarbe (#204f9e) */
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path fill='%23204f9e' d='M0 3l5 5 5-5z'/></svg>");
             background-repeat: no-repeat;
-            background-position: right 15px center;
+            background-position: right 10px center;
+        }
+
+        select option {
+            background-color: #ffffff;
+            color: #000000;
         }
 
         /* --- SEITEN-ARCHITEKTUR --- */
@@ -151,3 +162,126 @@
             width: 90%;
             z-index: 2000;
             opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+
+        .modal h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .modal p {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .close-btn {
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 1999;
+            display: none;
+        }
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-wrapper" onclick="navigateTo('')">
+            <img src="Logo.png?v=1" alt="alle für alle Logo" class="site-logo">
+        </div>
+        <div class="nav-dropdown">
+            <select id="menu-select" onchange="navigateTo(this.value)">
+                <option value="">Menü</option>
+                <option value="ueber-uns">Über das Projekt</option>
+                <option value="formate">Formate</option>
+                <option value="manifest">Manifest</option>
+                <option value="kontakt">Kontakt</option>
+            </select>
+        </div>
+    </header>
+
+    <div class="page" id="page-home">
+        <div id="canvas-container"></div>
+    </div>
+
+    <div class="page" id="page-ueber-uns">
+        <div class="content-container">
+            <h2>Über das Projekt</h2>
+            <p>Demokratie ist keine Selbstverständlichkeit. Sie ist ein lebendiger Organismus, der von Beteiligung, Reibung und Bewegung lebt. „alle für alle“ macht diese Dynamik sicht- und erlebbar.</p>
+        </div>
+    </div>
+
+    <div class="page" id="page-formate">
+        <div class="content-container">
+            <h2>Formate</h2>
+            <p>Unsere Bewegung findet in unterschiedlichen Kanälen statt. Wir verbinden digitale Interaktion mit realen Interventionen im urbanen Raum.</p>
+        </div>
+    </div>
+
+    <div class="page" id="page-manifest">
+        <div class="content-container">
+            <h2>Manifest</h2>
+            <p>1. Bewegung ist Pflicht. Stillstand bedeutet Rückschritt im demokratischen Gefüge.</p>
+        </div>
+    </div>
+
+    <div class="page" id="page-kontakt">
+        <div class="content-container">
+            <h2>Kontakt</h2>
+            <p>Schreib uns eine E-Mail oder vernetze dich mit unserer Redaktion. Gemeinsam setzen wir Ideen in Bewegung.</p>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeModal()"></div>
+    <div class="modal" id="modal">
+        <h2 id="modal-title">Titel</h2>
+        <p id="modal-text">Inhalt...</p>
+        <button class="close-btn" onclick="closeModal()">Schließen</button>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        const overlay = document.getElementById('overlay');
+        const modalTitle = document.getElementById('modal-title');
+        const modalText = document.getElementById('modal-text');
+
+        function navigateTo(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            document.getElementById('menu-select').value = pageId;
+
+            if(pageId === '') {
+                document.getElementById('page-home').style.opacity = "1";
+                document.getElementById('page-home').style.pointerEvents = "auto";
+            } else {
+                const targetPage = document.getElementById('page-' + pageId);
+                if(targetPage) {
+                    targetPage.classList.
